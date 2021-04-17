@@ -1,10 +1,6 @@
-//Create a function which returns the number of true values there are in an array.
-function countTrue(arr) {
-	let count = 0;
-	for(let item of arr)
-		if(item===true)
-			count++;
-	
-	return count;
-	 
+//Create a function that takes a country's name and its area as arguments and returns the area of the country's proportion of the total world's landmass.function countTrue(arr) {
+	function areaOfCountry(name, area) {
+	let globalArea = area*100/148940000;
+	globalArea = globalArea.toFixed(2);
+	return `${name} is ${globalArea}% of the total world's landmass`;
 }
