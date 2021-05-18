@@ -5,40 +5,47 @@ collectionName = mongoclient.getCollection();
 });
 
 
-function Find()
+async function Find()
 {
-    const Students =  collectionName;
-    return Students.find({}).toArray();
+    const result =  await collectionName.find({}).toArray();
+    console.log("hekki");
+    return result;
 }
 
-function FindOne(req)
+async function FindOne(id)
 {
-    const Students =  collectionName;
-    return Students.findOne({ _id:parseInt(req.params._id) });
+    const result =  await collectionName.findOne({ _id:parseInt(id) });
+    return result;
 }
 
-function Insert(req)
+async function Insert(details)
 {
-    const Students =  collectionName;
-     return Students.insertOne(req.body);
+    const result = await collectionName.insertOne(details);
+    return result;
 }
 
-function Update(req)
+async function InsertMany(details)
 {
-const Students = collectionName;
-return Students.updateOne(
-     { _id: parseInt(req.params._id) },
-    { $set: req.body });
+    const result = await collectionName.InsertMany();
+    return result;
+}
+
+async function Update(id,body)
+{
+const result = await collectionName.updateOne(
+    { _id: parseInt(id,body)},
+   { $set: body });
+return result;
 }
 
 
-function Delete(req)
+async function Delete(id)
 {
-    const Students = collectionName;
-    return Students.deleteOne(
+    const result = await collectionName.deleteOne(
         {
-          _id: parseInt(req.params._id),
+          _id: parseInt(id),
         });
+        return result;
 }
 
 module.exports = {
