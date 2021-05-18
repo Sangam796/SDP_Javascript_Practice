@@ -1,27 +1,25 @@
 const express = require("express");
 const router = express.Router();
-const mongoclient = require("../mongo/db");
-let collectionName;
-mongoclient.mongoConnection(() => {
-  collectionName = mongoclient.getCollection();
-});
+const mdbMethod = require('../mongodb/mongomethod');
+
+
 
 router.get("/", async (req, res) => {
   try {
-    const Students = await collectionName;
-    const result = await Students.find({}).toArray();
+    
+    const result = await mdbMethod.Find();
     res.send(result);
   } catch (err) {
     res.send(err.message);
     console.log(err.message);
   }
 });
+
 
 router.get("/:_id", async (req, res) => {
   try {
     let id = parseInt(req.params._id);
-    Students = await collectionName;
-    const result = await Students.findOne({ _id: id });
+    const result = await mdbMethod.FindOne(req);
     res.send(result);
   } catch (err) {
     res.send(err.message);
@@ -29,15 +27,10 @@ router.get("/:_id", async (req, res) => {
   }
 });
 
+
 router.post("/", async (req, res) => {
   try {
-    const details = {
-      _id: req.body._id,
-      name: req.body.name,
-      course: req.body.course,
-      yearOfGraduation: req.body.yearOfGraduation,
-    };
-    const result = await collectionName.insertOne(details);
+    const result = await  mdbMethod.Insert(req)
     res.send(result.ops);
   } catch (err) {
     res.send(err.message);
@@ -45,15 +38,10 @@ router.post("/", async (req, res) => {
   }
 });
 
+
 router.put("/:_id", async (req, res) => {
   try {
-    const userId = parseInt(req.params._id);
-    const details = req.body;
-    console.log(details);
-    const result = await collectionName.updateOne(
-      { _id: userId },
-      { $set: details }
-    );
+    const result = await mdbMethod.Update(req);
     console.log("Result modified");
     res.send(result);
   } catch (err) {
@@ -62,16 +50,11 @@ router.put("/:_id", async (req, res) => {
   }
 });
 
+
 router.delete("/:_id", async (req, res) => {
   try {
-    const Students = await collectionName;
-    const result = await Students.deleteOne(
-      {
-        _id: parseInt(req.params._id),
-      },
-      1
-    );
-    res.send("Member Deleted");
+    const result = await mdbMethod.Delete(req);
+    res.send(result);
   } catch (err) {
     res.send(err.message);
     console.log("Error caught");
