@@ -5,11 +5,14 @@ const mdbMethod = require('../mongoMethods/mongomethod');
 
 
 router.get("/", async (req, res) => {
-  
-    const result = await mdbMethod.Find();
+    var id = req.query._id;
+    var result;
+    if(id!==undefined)
+     result = await mdbMethod.Find(id);
+    else
+    result = await mdbMethod.Find();
     if(result!==null)
     {
-      console.log("document found");
     res.status(200).send(result);
     }
     else
@@ -17,9 +20,10 @@ router.get("/", async (req, res) => {
 });
 
 
+
 router.get("/:_id", async (req, res) => {
   try {
-    const result = await mdbMethod.FindOne(req.params._id);
+      const result = await mdbMethod.FindOne(req.params._id);
     if(result)
     {
     res.status(200).send(result);
@@ -45,6 +49,22 @@ router.post("/", async (req, res) => {
 });
 
 
+router.put('/', async (req, res)=>
+{
+  try
+  {
+  const id = req.query._id;
+    const result = await mdbMethod.UpdateUsingQuery(id,req.body);
+    if(result.modifiedCount===0)
+    throw new Error(`_id: ${id} is not matched with the documnets' _id`);
+    res.status(201).send(result);
+  } catch (err) {
+    console.log("Document could not be updated.");
+    res.status(406).send(err.message);
+  }
+})
+
+
 router.put("/:_id", async (req, res) => {
   try {
     const result = await mdbMethod.Update(req.params._id,req.body);
@@ -56,6 +76,21 @@ router.put("/:_id", async (req, res) => {
     res.status(406).send(err.message);
   }
 });
+
+
+router.delete("/", async (req, res) => {
+  try {
+    const id = req.query._id;
+    const result = await mdbMethod.DeleteUsingQuery(id);
+    if(result.deletedCount===0)
+    throw new Error("Unable to delete")
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(404).send(err.message);
+    console.log("Error: Couldn't delete");
+  }
+});
+
 
 
 router.delete("/:_id", async (req, res) => {
